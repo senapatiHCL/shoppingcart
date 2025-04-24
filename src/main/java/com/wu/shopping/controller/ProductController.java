@@ -35,7 +35,7 @@ public class ProductController {
 			return ResponseEntity.ok(productService.saveProduct(product));
 	}
 
-	@GetMapping(value="getAllProductCatalog",consumes = MediaType.APPLICATION_JSON_VALUE ,produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value="getAllProductCatalog")
 	public ResponseEntity<?> getAllProductCatalog() throws NoDataFoundException {
 		logger.info("inside getAllProductCatalog begine");
 		List<Product> productList=productService.getAllProduct();

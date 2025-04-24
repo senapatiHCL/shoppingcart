@@ -30,13 +30,13 @@ public class ProfileController {
 	 @Autowired
 	 private  RegistrationService registrationService;
 	 
-@GetMapping(value="viewProfileById",consumes = MediaType.APPLICATION_JSON_VALUE ,produces = MediaType.APPLICATION_JSON_VALUE)
+@GetMapping(value="viewProfileById")
 public ResponseEntity<?> getProfileById(@RequestParam String profiileId) throws NoDataFoundException {
 	logger.info("inside getProfileById() begine");
 		return ResponseEntity.ok(registrationService.findUserById(profiileId));	
 }
  
-@PutMapping(value="/updateProfile",consumes = MediaType.APPLICATION_JSON_VALUE ,produces = MediaType.APPLICATION_JSON_VALUE)
+@PutMapping(value="/updateProfile")
 public ResponseEntity<?> updateUser(@Valid @RequestBody User user) {
 	User dbuser=registrationService.findUserById(user.getId()); // if not present will throw exception in service layer
   if(! dbuser.getPassword().equalsIgnoreCase(user.getPassword())) {
