@@ -1,11 +1,14 @@
 package com.wu.shopping.service.jwt;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.wu.shopping.dto.LoginUserDto;
+import com.wu.shopping.dto.UserDTO;
+import com.wu.shopping.model.Address;
 import com.wu.shopping.model.User;
 import com.wu.shopping.repo.RegistrationRepo;
 
@@ -14,23 +17,32 @@ import java.util.List;
 
 @Service
 public class AuthenticationService {
-    private final RegistrationRepo userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
+	@Autowired
+    private RegistrationRepo registrationRepo;
+	@Autowired
+    private PasswordEncoder passwordEncoder;
+	@Autowired
+    private AuthenticationManager authenticationManager;
 
-    public AuthenticationService(
-    		RegistrationRepo userRepository,
-        AuthenticationManager authenticationManager,
-        PasswordEncoder passwordEncoder
-    ) {
-        this.authenticationManager = authenticationManager;
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
-    public User signup(User input) {
-        input.setPassword(passwordEncoder.encode(input.getPassword()));
-        return userRepository.save(input);
+    public User signup(UserDTO user) {
+    	User registeringUser=new User();
+    	registeringUser.setEmail(user.getEmail());
+    	registeringUser.setFirstName(user.getFirstName());
+    	registeringUser.setLastName(user.getLastName());
+    	registeringUser.setMiddleName(user.getMiddleName());
+    	registeringUser.setPassword(user.getPassword());
+    	registeringUser.setPhoneNumber(user.getPhoneNumber());
+    	Address add= new Address();
+    	add.setCity(user.getAddress().getCity());
+    	add.setCountry(user.getAddress().getCountry());
+    	add.setHouseNumber(user.getAddress().getHouseNumber());
+    	add.setState(user.getAddress().getState());
+    	add.setStreet(user.getAddress().getStreet());
+    	add.setZipCode(user.getAddress().getZipCode());
+    	registeringUser.setAddress(add);
+    	user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return registrationRepo.save(registeringUser);
     }
 
     public User authenticate(LoginUserDto input) {
@@ -41,13 +53,13 @@ public class AuthenticationService {
             )
         );
 
-        return userRepository.findByEmail(input.getEmail()).orElseThrow();
+        return registrationRepo.findByEmail(input.getEmail()).orElseThrow();
     }
 
     public List<User> allUsers() {
         List<User> users = new ArrayList<>();
 
-        userRepository.findAll().forEach(users::add);
+        registrationRepo.findAll().forEach(users::add);
 
         return users;
     }

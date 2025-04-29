@@ -3,6 +3,7 @@
  */
 package com.wu.shopping.service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,6 +32,9 @@ public class ProductService {
 	
 	public Product saveProduct(Product product){
 		logger.info("inside saveProduct() ");
+		Instant now = Instant.now();
+		long timestamp = now.toEpochMilli();
+		product.setProduct_id("pr_"+timestamp);
 		return productRepo.save(product);
 	}
 }

@@ -3,15 +3,20 @@ package com.wu.shopping.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wu.shopping.dto.UserDTO;
 import com.wu.shopping.exception.NoDataFoundException;
 import com.wu.shopping.model.User;
 import com.wu.shopping.service.RegistrationService;
 
 import jakarta.validation.Valid;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,18 +35,22 @@ public class ProfileController {
 	 @Autowired
 	 private  RegistrationService registrationService;
 	 
-@GetMapping(value="viewProfileById")
-public ResponseEntity<?> getProfileById(@RequestParam String profiileId) throws NoDataFoundException {
+@GetMapping(value="viewProfileByEmail")
+public ResponseEntity<?> findUserByEmail(@RequestParam String email) throws NoDataFoundException {
 	logger.info("inside getProfileById() begine");
-		return ResponseEntity.ok(registrationService.findUserById(profiileId));	
+	 Map responseMap = new HashMap<>();
+	 responseMap.put("description", registrationService.findUserByEmail(email));
+     responseMap.put("status", HttpStatus.OK.value());
+     return new ResponseEntity<>(responseMap,HttpStatus.OK);
 }
  
 @PutMapping(value="/updateProfile")
-public ResponseEntity<?> updateUser(@Valid @RequestBody User user) {
-	User dbuser=registrationService.findUserById(user.getId()); // if not present will throw exception in service layer
-  if(! dbuser.getPassword().equalsIgnoreCase(user.getPassword())) {
-	  return ResponseEntity.badRequest().body("Right Now updating password not allowed");
-  }
-	return ResponseEntity.ok(registrationService.registerUser(user));
+public ResponseEntity<?> updateUser(@Valid @RequestBody UserDTO user) {
+  registrationService.updateUser(user);
+  Map responseMap = new HashMap<>();
+	 responseMap.put("description", "User Detail Updated Successfully");
+responseMap.put("status", HttpStatus.OK.value());
+  return new ResponseEntity<>(responseMap,HttpStatus.OK);
+//	return ResponseEntity.ok(registrationService.updateUser(user));
 }
 }

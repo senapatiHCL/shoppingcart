@@ -1,33 +1,24 @@
 package com.wu.shopping.service.jwt;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
 public class LoginResponse {
     private String token;
 
     private long expiresIn;
+    private String firstName;
+    private String lastName;
+    private String middleName;
+    private String email;
 
-    public String getToken() {
-        return token;
-    }
-
-    public LoginResponse setToken(String token) {
-        this.token = token;
-        return this;
-    }
-
-    public long getExpiresIn() {
-        return expiresIn;
-    }
-
-    public LoginResponse setExpiresIn(long expiresIn) {
-        this.expiresIn = expiresIn;
-        return this;
-    }
-
-    @Override
-    public String toString() {
-        return "LoginResponse{" +
-                "token='" + token + '\'' +
-                ", expiresIn=" + expiresIn +
-                '}';
-    }
+    
 }

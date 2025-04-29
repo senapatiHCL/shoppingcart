@@ -11,6 +11,6 @@ import com.wu.shopping.model.Product;
  */
 
 @Repository
-public interface ProductRepo  extends MongoRepository<Product, ObjectId>{
+public interface ProductRepo  extends MongoRepository<Product, String>{
 
 }

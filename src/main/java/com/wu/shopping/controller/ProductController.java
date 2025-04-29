@@ -1,6 +1,8 @@
 package com.wu.shopping.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RestController
-@RequestMapping("/product/")
+@RequestMapping("/public/product")
 public class ProductController {
 
 	Logger logger=LoggerFactory.getLogger(ProductController.class);
@@ -40,7 +42,11 @@ public class ProductController {
 		logger.info("inside getAllProductCatalog begine");
 		List<Product> productList=productService.getAllProduct();
 		if(productList!=null && !productList.isEmpty()) {
-			return new ResponseEntity<>(productList,HttpStatus.OK);}
+			Map responseMap = new HashMap<>();
+	        responseMap.put("description", productList);
+	        responseMap.put("status", HttpStatus.OK.value());
+	        return new ResponseEntity<>(responseMap,HttpStatus.OK);
+		}
 		else {
 			throw new NoDataFoundException("No Product Data Found");
 		}

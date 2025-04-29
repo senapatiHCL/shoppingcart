@@ -85,13 +85,17 @@ public class GlobalExceptionHandler {
         if (exception instanceof EmailAlreadyExistException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(409), exception.getMessage());
             errorDetail.setProperty("description", "This email Already Exists");
+        }if (exception instanceof PasswordUpdateNotAllowedException) {
+            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(410), exception.getMessage());
+            errorDetail.setProperty("description", "Right Now Password Updation Is Not Allowed");
         }
         if (exception instanceof MethodArgumentNotValidException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(408), exception.getMessage());
             Map<String, Object> errorsMap = new HashMap<>();
             ((BindException) exception).getBindingResult().getFieldErrors().forEach(error ->
           errorsMap.put(error.getField(), error.getDefaultMessage()));
-            errorDetail.setProperty("description", errorsMap);
+         //   errorDetail.setProperty("description", errorsMap);
+            errorDetail.setProperty("description", "Some validation fails, please check");
         }
 
         if (errorDetail == null) {
