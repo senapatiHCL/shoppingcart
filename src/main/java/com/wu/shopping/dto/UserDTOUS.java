@@ -19,17 +19,15 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDTO {
+public class UserDTOUS {
 
-	private String id;
-	
-    @NotBlank(message = "First Name is mandatory")
+	@Pattern(regexp = "^[a-zA-Z]*$", message = "Only Alphabets Allowed")
     private String firstName;
 
-   // @NotBlank(message = "Middle Name is mandatory")
+	@Pattern(regexp = "^[a-zA-Z]*$", message = "Only Alphabets Allowed")
     private String middleName;
 
-    @NotBlank(message = "Last Name is mandatory")
+	@Pattern(regexp = "^[a-zA-Z]*$", message = "Only Alphabets Allowed")
     private String lastName;
 
     @NotBlank(message = "Email is mandatory")
