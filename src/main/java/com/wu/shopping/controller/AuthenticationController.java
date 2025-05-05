@@ -55,7 +55,7 @@ public class AuthenticationController {
        
     }
     
-    @PostMapping(value="/en/signup",consumes = MediaType.APPLICATION_JSON_VALUE ,produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value="/in/signup",consumes = MediaType.APPLICATION_JSON_VALUE ,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> registerIn(@Valid @RequestBody UserDTO user) {
     	 if(registrationService.existsByEmail(user.getEmail())) {
          	throw new EmailAlreadyExistException("This email Already Exists");
@@ -81,6 +81,7 @@ public class AuthenticationController {
         loginResponse.setFirstName(authenticatedUser.getFirstName());
         loginResponse.setLastName(authenticatedUser.getLastName());
         loginResponse.setMiddleName(authenticatedUser.getMiddleName());
+        loginResponse.setUserid(authenticatedUser.getId());
         loginResponse.setToken(jwtToken);
         Map responseMap = new HashMap<>();
         responseMap.put("description", loginResponse);

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.wu.shopping.controller.ProfileController;
+import com.wu.shopping.exception.NoDataFoundException;
 import com.wu.shopping.model.Product;
 import com.wu.shopping.repo.ProductRepo;
 
@@ -29,12 +30,24 @@ public class ProductService {
 		logger.info("inside getAllProduct() ");
 		return productRepo.findAll();
 	}
+	public Product getProductById(String productId){
+		logger.info("inside getAllProduct() ");
+		return productRepo.findById(productId).orElseThrow(()-> new NoDataFoundException("No Data Found"));
+	}
 	
 	public Product saveProduct(Product product){
 		logger.info("inside saveProduct() ");
 		Instant now = Instant.now();
 		long timestamp = now.toEpochMilli();
-		product.setProduct_id("pr_"+timestamp);
+		product.setProductId("pr_"+timestamp);
 		return productRepo.save(product);
 	}
+	
+	public List<Product> searchProduct(String title){
+		List<Product> productList= productRepo.findByTitleRegex(title);
+		if(productList==null)
+			productList= productRepo.findByCategoryNameRegex(title);
+		return productList;
+	}
+//	findByCategoryNameRegex
 }

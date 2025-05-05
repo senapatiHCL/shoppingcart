@@ -15,7 +15,7 @@ public class ResponseBean {
 
 	private int statusCode;
 	private String errorMsg;
-	private Object data; //User
+	private Object data;
 	private HttpStatus statusType;
 	
 	

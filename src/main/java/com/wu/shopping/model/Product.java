@@ -29,7 +29,7 @@ import lombok.NoArgsConstructor;
 public class Product {
 	
 	@Id
-	private String product_id;
+	private String productId;
 	@NotBlank(message = "title is mandatory")
     private String title;
 	@NotBlank(message = "price is mandatory")

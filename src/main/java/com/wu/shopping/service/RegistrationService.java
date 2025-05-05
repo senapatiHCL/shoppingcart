@@ -1,10 +1,12 @@
 package com.wu.shopping.service;
 
 
+import com.wu.shopping.dto.UpdatePasswordDto;
 import com.wu.shopping.dto.UserDTO;
 import com.wu.shopping.dto.UserDTOUS;
 import com.wu.shopping.exception.NoDataFoundException;
 import com.wu.shopping.exception.PasswordUpdateNotAllowedException;
+import com.wu.shopping.exception.SomeThingWentWrongException;
 import com.wu.shopping.model.Address;
 import com.wu.shopping.model.User;
 import com.wu.shopping.repo.RegistrationRepo;
@@ -27,13 +29,13 @@ public class RegistrationService {
     
     public User registerUser(UserDTO user) {
     	User registeredUser=mapUserDtoTOUser(user);
-    	registeredUser.setPassword(passwordEncoder.encode(user.getPassword()));
+    	registeredUser.setPassword(hashPassword(user.getPassword()));
         return registrationRepo.save(registeredUser);
     }
     
     public User registerUsUser(UserDTOUS user) {
     	User registeredUser=mapUserUSDtoTOUser(user);
-    	registeredUser.setPassword(passwordEncoder.encode(user.getPassword()));
+    	registeredUser.setPassword(hashPassword(user.getPassword()));
         return registrationRepo.save(registeredUser);
     }
     
@@ -103,9 +105,22 @@ public class RegistrationService {
         return registrationRepo.save(updatingUser);
     }
     
+    public void setNewPassword(UpdatePasswordDto updatePasswordDto) {
+    	User dbuser=findUserById(updatePasswordDto.getId());
+    	if(! updatePasswordDto.getNewpassword().equals(updatePasswordDto.getConfirmPassword())) {
+    		throw new SomeThingWentWrongException("Error.PasswordMismatch");
+    	}if(updatePasswordDto.getNewpassword().equals(updatePasswordDto.getOldpassword())) {
+    		throw new SomeThingWentWrongException("Error.OldNewPasswordSame");
+    	}if(! passwordEncoder.matches(updatePasswordDto.getOldpassword(), dbuser.getPassword())) {
+    		throw new SomeThingWentWrongException("Error.WrongPassword");
+    	}
+    	dbuser.setPassword(hashPassword(updatePasswordDto.getNewpassword()));
+    	 registrationRepo.save(dbuser);
+    	
+    }
+    
     private String hashPassword(String password) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        return encoder.encode(password) ;
+    	return passwordEncoder.encode(password.trim());
     }
 
 

@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wu.shopping.exception.NoDataFoundException;
 import com.wu.shopping.model.Product;
+import com.wu.shopping.repo.ProductRepo;
 import com.wu.shopping.service.ProductService;
 
 import org.slf4j.Logger;
@@ -32,24 +34,45 @@ public class ProductController {
 	@Autowired
 	private ProductService productService;
 	
+	@Autowired
+	private ProductRepo productRepo;
+	
 	@PostMapping(value="saveProduct",consumes = MediaType.APPLICATION_JSON_VALUE ,produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> saveProduct(@RequestBody Product product,BindingResult br) {
 		logger.info("inside saveProduct() begine");
 			return ResponseEntity.ok(productService.saveProduct(product));
 	}
 
-	@GetMapping(value="getAllProductCatalog")
-	public ResponseEntity<?> getAllProductCatalog() throws NoDataFoundException {
-		logger.info("inside getAllProductCatalog begine");
-		List<Product> productList=productService.getAllProduct();
-		if(productList!=null && !productList.isEmpty()) {
-			Map responseMap = new HashMap<>();
-	        responseMap.put("description", productList);
-	        responseMap.put("status", HttpStatus.OK.value());
-	        return new ResponseEntity<>(responseMap,HttpStatus.OK);
-		}
-		else {
-			throw new NoDataFoundException("No Product Data Found");
-		}
+	
+	@GetMapping(value="getProductById",consumes = MediaType.APPLICATION_JSON_VALUE ,produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> getProductById(@RequestParam String productid) {
+		logger.info("inside saveProduct() begine");
+			return ResponseEntity.ok(productService.getProductById(productid));
+	}
+	
+//	@GetMapping(value="getAllProductCatalog")
+//	public ResponseEntity<?> getAllProductCatalog() throws NoDataFoundException {
+//		logger.info("inside getAllProductCatalog begine");
+//		List<Product> productList=productService.getAllProduct();
+//		if(productList!=null && !productList.isEmpty()) {
+//			Map responseMap = new HashMap<>();
+//	        responseMap.put("description", productList);
+//	        responseMap.put("status", HttpStatus.OK.value());
+//	        return new ResponseEntity<>(responseMap,HttpStatus.OK);
+//		}
+//		else {
+//			throw new NoDataFoundException("No Product Data Found");
+//		}
+//	}
+	
+	@GetMapping(value="getAllProductCatalog",consumes = MediaType.APPLICATION_JSON_VALUE ,produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> searchProduct(@RequestParam String searchKeyword) {
+		logger.info("inside searchProduct() begine");
+		List<Product> productList=productService.searchProduct(searchKeyword);
+		Map responseMap = new HashMap<>();
+        responseMap.put("description", productList);
+        responseMap.put("total", productList.size());
+        responseMap.put("status", HttpStatus.OK.value());
+        return new ResponseEntity<>(responseMap,HttpStatus.OK);
 	}
 }

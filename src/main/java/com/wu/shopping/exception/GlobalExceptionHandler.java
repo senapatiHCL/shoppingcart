@@ -35,7 +35,7 @@ import io.swagger.v3.oas.annotations.Hidden;
 public class GlobalExceptionHandler {
 	Logger logger=LoggerFactory.getLogger(GlobalExceptionHandler.class);
 	@Autowired
-   private MessageSource messageSource;
+	private MessageSource messageSource;
 	
 	@ExceptionHandler(Exception.class)
     public ProblemDetail handleSecurityException(Exception exception) {
@@ -46,63 +46,65 @@ public class GlobalExceptionHandler {
 
         if (exception instanceof BadCredentialsException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(401), exception.getMessage());
-            errorDetail.setProperty("description", "The username or password is incorrect");
+            errorDetail.setProperty(messageSource.getMessage("Parameter.Description", null, Locale.ENGLISH), messageSource.getMessage("Error.WU401", null, Locale.ENGLISH));
 
             return errorDetail;
         }
 
         if (exception instanceof AccountStatusException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(402), exception.getMessage());
-            errorDetail.setProperty("description", "The account is locked");
+            errorDetail.setProperty(messageSource.getMessage("Parameter.Description", null, Locale.ENGLISH), messageSource.getMessage("Error.WU402", null, Locale.ENGLISH));
         }
 
         if (exception instanceof AccessDeniedException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
-            errorDetail.setProperty("description", "You are not authorized to access this resource");
+            errorDetail.setProperty(messageSource.getMessage("Parameter.Description", null, Locale.ENGLISH), "You are not authorized to access this resource");
         }
 
         if (exception instanceof SignatureException) {
-            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(404), exception.getMessage());
-            errorDetail.setProperty("description", "The JWT signature is invalid");
+            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(408), exception.getMessage());
+            errorDetail.setProperty(messageSource.getMessage("Parameter.Description", null, Locale.ENGLISH), messageSource.getMessage("Error.WU408", null, Locale.ENGLISH));
         }
 
         if (exception instanceof ExpiredJwtException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(405), exception.getMessage());
-            errorDetail.setProperty("description", "The JWT token has expired");
+            errorDetail.setProperty(messageSource.getMessage("Parameter.Description", null, Locale.ENGLISH), messageSource.getMessage("Error.WU405", null, Locale.ENGLISH));
         }
         if (exception instanceof NoDataFoundException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(406), exception.getMessage());
-            errorDetail.setProperty("description", "no user found");
+            errorDetail.setProperty(messageSource.getMessage("Parameter.Description", null, Locale.ENGLISH), messageSource.getMessage("Error.WU406", null, Locale.ENGLISH));
         }
         if (exception instanceof IllegalArgumentException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(407), exception.getMessage());
-            errorDetail.setProperty("description", "Illigal arguments");
+            errorDetail.setProperty(messageSource.getMessage("Parameter.Description", null, Locale.ENGLISH), messageSource.getMessage("Error.WU407", null, Locale.ENGLISH));
         }
         if (exception instanceof NullPointerException) {
-            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(409), exception.getMessage());
-            errorDetail.setProperty("description", "null Pointer");
+            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(411), exception.getMessage());
+            errorDetail.setProperty(messageSource.getMessage("Parameter.Description", null, Locale.ENGLISH), messageSource.getMessage("Error.WU411", null, Locale.ENGLISH));
         }
         if (exception instanceof EmailAlreadyExistException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(409), exception.getMessage());
-            errorDetail.setProperty("description", "This email Already Exists");
+            errorDetail.setProperty(messageSource.getMessage("Parameter.Description", null, Locale.ENGLISH), messageSource.getMessage("Error.WU409", null, Locale.ENGLISH));
         }if (exception instanceof PasswordUpdateNotAllowedException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(410), exception.getMessage());
-            errorDetail.setProperty("description", "Right Now Password Updation Is Not Allowed");
+            errorDetail.setProperty(messageSource.getMessage("Parameter.Description", null, Locale.ENGLISH), messageSource.getMessage("Error.WU410", null, Locale.ENGLISH));
         }
         if (exception instanceof MethodArgumentNotValidException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(408), exception.getMessage());
             Map<String, Object> errorsMap = new HashMap<>();
             ((BindException) exception).getBindingResult().getFieldErrors().forEach(error ->
           errorsMap.put(error.getField(), error.getDefaultMessage()));
-         //   errorDetail.setProperty("description", errorsMap);
-            errorDetail.setProperty("description", "Some validation fails, please check");
+         //   errorDetail.setProperty(messageSource.getMessage("Parameter.Description", null, null), errorsMap);
+            errorDetail.setProperty(messageSource.getMessage("Parameter.Description", null, Locale.ENGLISH), messageSource.getMessage("Error.WU408", null, Locale.ENGLISH));
+        } if (exception instanceof SomeThingWentWrongException) {
+            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(409), messageSource.getMessage(exception.getMessage(), null, Locale.ENGLISH));
+            errorDetail.setProperty(messageSource.getMessage("Parameter.Description", null, Locale.ENGLISH), messageSource.getMessage(exception.getMessage(), null, Locale.ENGLISH));
         }
 
         if (errorDetail == null) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(500), exception.getMessage());
-            errorDetail.setProperty("description", "Unknown internal server error.");
+            errorDetail.setProperty(messageSource.getMessage("Parameter.Description", null, Locale.ENGLISH), messageSource.getMessage("Error.WU500", null, Locale.ENGLISH));
         }
-System.out.println("errorDetail--"+errorDetail);
         return errorDetail;
     }
 	

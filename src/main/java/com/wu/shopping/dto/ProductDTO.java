@@ -19,7 +19,7 @@ public class ProductDTO {
     private float price;
     private String description;
     private String images;
-    @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Invalid phone number")
+    @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Invalid qunatity")
     private int qunatity;
     @Valid
     private Category category;

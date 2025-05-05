@@ -3,6 +3,7 @@ package com.wu.shopping.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wu.shopping.dto.UpdatePasswordDto;
 import com.wu.shopping.dto.UserDTO;
 import com.wu.shopping.exception.NoDataFoundException;
 import com.wu.shopping.model.User;
@@ -44,12 +45,31 @@ public ResponseEntity<?> findUserByEmail(@RequestParam String email) throws NoDa
      responseMap.put("status", HttpStatus.OK.value());
      return new ResponseEntity<>(responseMap,HttpStatus.OK);
 }
+
+@GetMapping(value="viewProfileById")
+public ResponseEntity<?> viewProfileById(@RequestParam String userId) throws NoDataFoundException {
+	logger.info("inside getProfileById() begine");
+	 Map responseMap = new HashMap<>();
+	 responseMap.put("description", registrationService.findUserById(userId));
+     responseMap.put("status", HttpStatus.OK.value());
+     return new ResponseEntity<>(responseMap,HttpStatus.OK);
+}
  
 @PutMapping(value="/updateProfile")
 public ResponseEntity<?> updateUser(@Valid @RequestBody UserDTO user) {
   registrationService.updateUser(user);
   Map responseMap = new HashMap<>();
 	 responseMap.put("description", "User Detail Updated Successfully");
+responseMap.put("status", HttpStatus.OK.value());
+  return new ResponseEntity<>(responseMap,HttpStatus.OK);
+//	return ResponseEntity.ok(registrationService.updateUser(user));
+}
+
+@PutMapping(value="/setNewPassword")
+public ResponseEntity<?> setNewPassword(@Valid @RequestBody UpdatePasswordDto updatePasswordDto) {
+  registrationService.setNewPassword(updatePasswordDto);
+  Map responseMap = new HashMap<>();
+	 responseMap.put("description", "Password Updated Successfully");
 responseMap.put("status", HttpStatus.OK.value());
   return new ResponseEntity<>(responseMap,HttpStatus.OK);
 //	return ResponseEntity.ok(registrationService.updateUser(user));
