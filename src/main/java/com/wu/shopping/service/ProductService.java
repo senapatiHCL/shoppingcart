@@ -44,7 +44,7 @@ public class ProductService {
 	}
 	
 	public Product decreaseProductQuantity(Product product,int orderedQuantity){
-		product.setQunatity(product.getQunatity()-orderedQuantity);
+		product.setQuantity(product.getQuantity()-orderedQuantity);
 	//	Product dbproduct=productRepo.findById(product.getProductId()).orElseThrow();
 		return productRepo.save(product);
 	}

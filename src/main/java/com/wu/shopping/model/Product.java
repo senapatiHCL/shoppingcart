@@ -38,7 +38,7 @@ public class Product {
     private String description;
     private String images;
     @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Invalid phone number")
-    private int qunatity;
+    private int quantity;
     @Valid
     private Category category;
      

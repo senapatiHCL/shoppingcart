@@ -23,5 +23,5 @@ public class ProductDTO {
     private int qunatity;
     @Valid
     private Category category;
-    private String product_id;
+    private String productid;
 }

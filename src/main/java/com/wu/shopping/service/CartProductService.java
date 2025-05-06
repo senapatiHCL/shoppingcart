@@ -42,7 +42,7 @@ public class CartProductService {
 			cartProduct.setQuantity(cartProduct.getQuantity()+cartProductDto.getQuantity());
 		}
 		
-		if(cartProduct.getQuantity()>pr.getQunatity()) {
+		if(cartProduct.getQuantity()>pr.getQuantity()) {
 			throw new SomeThingWentWrongException("Error.outofstock");
 			}
 		
