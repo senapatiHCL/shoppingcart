@@ -65,7 +65,7 @@ public class ProductController {
 //		}
 //	}
 	
-	@GetMapping(value="getAllProductCatalog",consumes = MediaType.APPLICATION_JSON_VALUE ,produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value="getAllProductCatalog" ,produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> searchProduct(@RequestParam String searchKeyword) {
 		logger.info("inside searchProduct() begine");
 		List<Product> productList=productService.searchProduct(searchKeyword);

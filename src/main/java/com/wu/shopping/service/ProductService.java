@@ -43,11 +43,26 @@ public class ProductService {
 		return productRepo.save(product);
 	}
 	
+	public Product decreaseProductQuantity(Product product,int orderedQuantity){
+		product.setQunatity(product.getQunatity()-orderedQuantity);
+	//	Product dbproduct=productRepo.findById(product.getProductId()).orElseThrow();
+		return productRepo.save(product);
+	}
+	
 	public List<Product> searchProduct(String title){
-		List<Product> productList= productRepo.findByTitleRegex(title);
-		if(productList==null)
+		List<Product> productList;
+		if(title==null ||title.isEmpty()) {
+			return getAllProduct();
+			}
+		else {
+			productList = productRepo.findByTitleRegex(title);
+		if(productList.size()==0) 
 			productList= productRepo.findByCategoryNameRegex(title);
+		if(productList.size()==0) 
 		return productList;
+		}
+		return productList;
+	
 	}
 //	findByCategoryNameRegex
 }

@@ -8,12 +8,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wu.shopping.controller.ProductController;
 import com.wu.shopping.dto.CartProductDto;
 import com.wu.shopping.exception.NoDataFoundException;
 import com.wu.shopping.exception.SomeThingWentWrongException;
 import com.wu.shopping.model.CartProduct;
-import com.wu.shopping.model.OrderDetail;
 import com.wu.shopping.model.Product;
 import com.wu.shopping.repo.CartProductRepo;
 
@@ -61,6 +59,11 @@ public class CartProductService {
 		return cartProductRepo.findAllByUserid(userId);
 	}
 	
+	public void updateCartProductByUserId(CartProduct cartProduct){
+		logger.info("Inside updateCartProductByUserId() | update cart product ");
+		 cartProductRepo.save(cartProduct);
+	}
+	
 	public CartProduct getCartProductByUserIdAndProductId(String userId,String productId){
 		logger.info("Inside getCartProductByUserIdAndProductId() | finding all product | in cart by user & product Id "+userId);
 		return cartProductRepo.findByUseridAndProductProductId(userId,productId);
@@ -79,6 +82,11 @@ public class CartProductService {
 		logger.info("Inside deleteByUseridAndProductProductId() | deleting by productId and userid "+productId);
 		 cartProductRepo.deleteByUseridAndProductProductId(userid,productId);
 	}
+
+	public void deleteCartItemByUserid(String userid){
+		logger.info("Inside deleteCartItemByUserid() | deleting by userid "+userid);
+		 cartProductRepo.deleteByUserid(userid);
+	}
 	
 	public void removeCartItemByUseridAndProductId(CartProductDto cartProductDto){
 		logger.info("Inside removeCartItemByUseridAndProductId() | removing cart item for userid "+cartProductDto.getUserId());
@@ -89,10 +97,10 @@ public class CartProductService {
 				if(cartProduct.getQuantity()<0) {
 					throw new SomeThingWentWrongException("Error.removingquantityError");
 					}
-				if(cartProduct.getQuantity()==0) {
+				if(cartProduct.getQuantity()==1) {
 					logger.info(" deleting from Cart | only one product In cart for user ");
 					deleteCartItemByUseridAndProductId(cartProductDto.getUserId(),cartProductDto.getProductId());
-				}if(cartProduct.getQuantity()>0) {
+				}if(cartProduct.getQuantity()>1) {
 					logger.info(" removing from Cart | more that one product In cart so decresing quantity for user ");
 					cartProductRepo.save(cartProduct);
 				}

@@ -70,6 +70,7 @@ public class CartProductController {
 			prodMap.put("title", cartProduct.getProduct().getTitle());
 			prodMap.put("price", cartProduct.getProduct().getPrice());
 			prodMap.put("quantity", cartProduct.getQuantity());
+			prodMap.put("productId", cartProduct.getProduct().getProductId());
 			prodMap.put("image", cartProduct.getProduct().getImages());
 			prodMap.put("amount", cartProduct.getProduct().getPrice()*cartProduct.getQuantity());
 			mapList.add(prodMap);

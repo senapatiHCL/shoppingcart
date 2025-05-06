@@ -9,11 +9,18 @@ import com.wu.shopping.exception.PasswordUpdateNotAllowedException;
 import com.wu.shopping.exception.SomeThingWentWrongException;
 import com.wu.shopping.model.Address;
 import com.wu.shopping.model.User;
+import com.wu.shopping.model.UserWallet;
 import com.wu.shopping.repo.RegistrationRepo;
+import com.wu.shopping.repo.WalletRepo;
 
+import java.time.Instant;
 import java.util.Optional;
+import java.util.Random;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 //import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,19 +31,30 @@ public class RegistrationService {
 
     @Autowired
     RegistrationRepo registrationRepo;
+    
+    @Autowired
+    WalletRepo walletRepo;
+    
     @Autowired
     private PasswordEncoder passwordEncoder;
     
+    @Value("${default.walletBalance}")
+	private double walletBalance;
+    Logger logger = LoggerFactory.getLogger(OrderDetailService.class);
     public User registerUser(UserDTO user) {
     	User registeredUser=mapUserDtoTOUser(user);
     	registeredUser.setPassword(hashPassword(user.getPassword()));
-        return registrationRepo.save(registeredUser);
+    	registeredUser= registrationRepo.save(registeredUser);
+    	createUserWallet(registeredUser);
+    	    	return registeredUser;
     }
     
     public User registerUsUser(UserDTOUS user) {
     	User registeredUser=mapUserUSDtoTOUser(user);
     	registeredUser.setPassword(hashPassword(user.getPassword()));
-        return registrationRepo.save(registeredUser);
+    	registeredUser= registrationRepo.save(registeredUser);
+        createUserWallet(registeredUser);
+        return registeredUser;
     }
     
     public User mapUserDtoTOUser(UserDTO user) {
@@ -122,6 +140,19 @@ public class RegistrationService {
     private String hashPassword(String password) {
     	return passwordEncoder.encode(password.trim());
     }
-
+    
+void createUserWallet(User user) {
+	logger.info("--- | createing user wallet with default balance | --");
+	Instant now = Instant.now();
+	Random rnd = new Random();
+    int number = rnd.nextInt(999999);
+	UserWallet wallet=new UserWallet();
+	wallet.setId("ZA"+number);
+	wallet.setIssueDate(now);
+	wallet.setUserid(user.getId());
+	wallet.setWalletAmount(walletBalance);
+	walletRepo.save(wallet);
+	logger.info("--- | wallet with default balance created| --");
+}
 
    }

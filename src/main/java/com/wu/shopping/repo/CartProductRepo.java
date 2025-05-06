@@ -14,6 +14,8 @@ public interface CartProductRepo  extends MongoRepository<CartProduct, String>{
 	 
 	 void deleteByProductProductId(String productId);
 	 
+	 void deleteByUserid(String userid);
+	 
 	 void deleteByUseridAndProductProductId(String userid,String productId);
 	 
 }

@@ -18,4 +18,5 @@ public class CartProduct {
 	  private String userid;
 	  private int quantity;
 	  private Product product;
+	  private String status;
 }
