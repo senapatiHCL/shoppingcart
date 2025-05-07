@@ -47,8 +47,8 @@ public class OrderDetailService {
 		return orderDetailRepo.findById(orderId).orElseThrow(() -> new NoDataFoundException("No Data Found"));
 	}
 	
-	public 	OrderDetail findOrderDetailByUserId(String userId){
-		return orderDetailRepo.findByUserid(userId).orElseThrow(() -> new NoDataFoundException("No Data Found"));
+	public 	List<OrderDetail> findOrderDetailByUserId(String userId){
+		return orderDetailRepo.findByUserid(userId);
 	}
 
 	public 	OrderDetail cancelOrder(String oderId,String userId){

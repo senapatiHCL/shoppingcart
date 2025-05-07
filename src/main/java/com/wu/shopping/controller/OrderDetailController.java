@@ -81,7 +81,7 @@ public class OrderDetailController {
 		responseMap.put("description", "Order cancelled");
 		responseMap.put("detail", oderdetl.getId());
 		responseMap.put("status", HttpStatus.OK.value());
-		return new ResponseEntity<>(orderDetailService.cancelOrder(orderId,userId), HttpStatus.OK);
+		return new ResponseEntity<>(responseMap, HttpStatus.OK);
 	}
 	
 }
