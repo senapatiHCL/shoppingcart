@@ -15,7 +15,7 @@ import com.wu.shopping.model.Product;
 @Repository
 public interface ProductRepo  extends MongoRepository<Product, String>{
 
-	List<Product> findByTitleRegexIgnoreCase(String title);
-	List<Product> findByCategoryNameRegexIgnoreCase(String categoryName);
+	List<Product> findByTitleContainingIgnoreCase(String title);
+	List<Product> findByCategoryContainingIgnoreCase(String categoryName);
 }
 	
