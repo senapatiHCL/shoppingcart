@@ -98,10 +98,10 @@ public class CartProductService {
 				if(cartProduct.getQuantity()<0) {
 					throw new SomeThingWentWrongException("Error.removingquantityError");
 					}
-				if(cartProduct.getQuantity()==1) {
+				if(cartProduct.getQuantity()==0) {
 					logger.info(" deleting from Cart | only one product In cart for user ");
 					deleteCartItemByUseridAndProductId(cartProductDto.getUserId(),cartProductDto.getProductId());
-				}if(cartProduct.getQuantity()>1) {
+				}if(cartProduct.getQuantity()>0) {
 					logger.info(" removing from Cart | more that one product In cart so decresing quantity for user ");
 					cartProductRepo.save(cartProduct);
 				}

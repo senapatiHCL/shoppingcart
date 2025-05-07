@@ -50,20 +50,6 @@ public class ProductController {
 			return ResponseEntity.ok(productService.getProductById(productid));
 	}
 	
-//	@GetMapping(value="getAllProductCatalog")
-//	public ResponseEntity<?> getAllProductCatalog() throws NoDataFoundException {
-//		logger.info("inside getAllProductCatalog begine");
-//		List<Product> productList=productService.getAllProduct();
-//		if(productList!=null && !productList.isEmpty()) {
-//			Map responseMap = new HashMap<>();
-//	        responseMap.put("description", productList);
-//	        responseMap.put("status", HttpStatus.OK.value());
-//	        return new ResponseEntity<>(responseMap,HttpStatus.OK);
-//		}
-//		else {
-//			throw new NoDataFoundException("No Product Data Found");
-//		}
-//	}
 	
 	@GetMapping(value="getAllProductCatalog" ,produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> searchProduct(@RequestParam String searchKeyword) {
