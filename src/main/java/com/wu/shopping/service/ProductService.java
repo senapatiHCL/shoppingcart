@@ -51,7 +51,7 @@ public class ProductService {
 	
 	public List<Product> searchProduct(String title){
 		List<Product> productList;
-		if(title==null ||title.isEmpty()) {
+		if(title==null ||title.isEmpty()||title.equalsIgnoreCase("null")) {
 			return getAllProduct();
 			}
 		else {
