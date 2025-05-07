@@ -28,7 +28,7 @@ public class CartProductService {
 		logger.info(" addToCart | Product adding to cart for "+cartProductDto.getUserId());
 		CartProduct cartProduct = getCartProductByUserIdAndProductId(cartProductDto.getUserId(),cartProductDto.getProductId());
 		Product pr= productService.getProductById(cartProductDto.getProductId());
-		
+		System.out.println(pr);
 		if(cartProduct==null) {
 			cartProduct=new CartProduct();
 			Instant now = Instant.now();
@@ -43,6 +43,7 @@ public class CartProductService {
 		}
 		
 		if(cartProduct.getQuantity()>pr.getQuantity()) {
+			logger.info(" | user quantity "+cartProduct.getQuantity()+" Product quantity "+pr.getQuantity()+" for user "+cartProductDto.getUserId());
 			throw new SomeThingWentWrongException("Error.outofstock");
 			}
 		

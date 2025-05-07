@@ -4,8 +4,10 @@ import jakarta.validation.constraints.Pattern;
 
 public class Address {
 
+	@Pattern(regexp = "^[a-zA-Z0-9_\\s]+$", message = "Only AlphaNumeric Allowed")
     private String houseNumber;
 
+    @Pattern(regexp = "^[a-zA-Z0-9_\\s]+$", message = "Only AlphaNumeric Allowed")
     private String street;
 
     @Pattern(regexp = "^[a-zA-Z]*$", message = "Only Alphabets Allowed")

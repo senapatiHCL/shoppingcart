@@ -28,4 +28,5 @@ public class OrderDetail {
   private String status;
   private String paymentMode;
   private String paymentStatus;
+  private Address shippingAddress;
 }

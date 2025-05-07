@@ -71,20 +71,9 @@ public class AuthenticationController {
     }
     @PostMapping(value="/login",consumes = MediaType.APPLICATION_JSON_VALUE ,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> authenticate(@RequestBody LoginUserDto loginUserDto) {
-        User authenticatedUser = authenticationService.authenticate(loginUserDto);
 
-        String jwtToken = jwtService.generateToken(authenticatedUser);
-
-        LoginResponse loginResponse = new LoginResponse();//.setToken(jwtToken).setExpiresIn(jwtService.getExpirationTime());
-        loginResponse.setEmail(authenticatedUser.getEmail());
-        loginResponse.setExpiresIn(jwtService.getExpirationTime());
-        loginResponse.setFirstName(authenticatedUser.getFirstName());
-        loginResponse.setLastName(authenticatedUser.getLastName());
-        loginResponse.setMiddleName(authenticatedUser.getMiddleName());
-        loginResponse.setUserid(authenticatedUser.getId());
-        loginResponse.setToken(jwtToken);
         Map responseMap = new HashMap<>();
-        responseMap.put("description", loginResponse);
+        responseMap.put("description", authenticationService.authenticate(loginUserDto));
         responseMap.put("status", HttpStatus.OK.value());
         return new ResponseEntity<>(responseMap,HttpStatus.OK);
      //   return ResponseEntity.ok(loginResponse);

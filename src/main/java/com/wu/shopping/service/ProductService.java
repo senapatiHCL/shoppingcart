@@ -55,9 +55,9 @@ public class ProductService {
 			return getAllProduct();
 			}
 		else {
-			productList = productRepo.findByTitleRegex(title);
+			productList = productRepo.findByTitleRegexIgnoreCase(title);
 		if(productList.size()==0) 
-			productList= productRepo.findByCategoryNameRegex(title);
+			productList= productRepo.findByCategoryNameRegexIgnoreCase(title);
 		if(productList.size()==0) 
 		return productList;
 		}

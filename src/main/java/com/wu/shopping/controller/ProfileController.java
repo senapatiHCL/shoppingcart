@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.wu.shopping.dto.UpdatePasswordDto;
 import com.wu.shopping.dto.UserDTO;
 import com.wu.shopping.exception.NoDataFoundException;
+import com.wu.shopping.model.Address;
 import com.wu.shopping.model.User;
 import com.wu.shopping.service.RegistrationService;
 
@@ -62,7 +63,6 @@ public ResponseEntity<?> updateUser(@Valid @RequestBody UserDTO user) {
 	 responseMap.put("description", "User Detail Updated Successfully");
 responseMap.put("status", HttpStatus.OK.value());
   return new ResponseEntity<>(responseMap,HttpStatus.OK);
-//	return ResponseEntity.ok(registrationService.updateUser(user));
 }
 
 @PutMapping(value="/setNewPassword")
@@ -70,6 +70,15 @@ public ResponseEntity<?> setNewPassword(@Valid @RequestBody UpdatePasswordDto up
   registrationService.setNewPassword(updatePasswordDto);
   Map responseMap = new HashMap<>();
 	 responseMap.put("description", "Password Updated Successfully");
+responseMap.put("status", HttpStatus.OK.value());
+  return new ResponseEntity<>(responseMap,HttpStatus.OK);
+}
+
+@GetMapping(value="/getAddress")
+public ResponseEntity<?> updateUser(@RequestParam String userId) {
+ Address add= registrationService.findUserById(userId).getAddress();
+  Map responseMap = new HashMap<>();
+	 responseMap.put("shippingAddress", add);
 responseMap.put("status", HttpStatus.OK.value());
   return new ResponseEntity<>(responseMap,HttpStatus.OK);
 //	return ResponseEntity.ok(registrationService.updateUser(user));

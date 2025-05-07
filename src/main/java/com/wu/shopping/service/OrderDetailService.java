@@ -113,6 +113,7 @@ public class OrderDetailService {
 		oder.setStatus("Ordered");
 		oder.setPaymentMode(pod.getMode());
 		oder.setPaymentStatus("payment awaiting");
+		oder.setShippingAddress(pod.getShippingAddress());
 		orderDetailRepo.save(oder);
 		return oder;
 	}

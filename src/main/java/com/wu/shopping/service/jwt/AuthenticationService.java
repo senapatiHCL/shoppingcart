@@ -23,7 +23,8 @@ public class AuthenticationService {
     private PasswordEncoder passwordEncoder;
 	@Autowired
     private AuthenticationManager authenticationManager;
-
+	@Autowired
+    private  JwtService jwtService;
 
     public User signup(UserDTO user) {
     	User registeringUser=new User();
@@ -45,15 +46,24 @@ public class AuthenticationService {
         return registrationRepo.save(registeringUser);
     }
 
-    public User authenticate(LoginUserDto input) {
+    public LoginResponse authenticate(LoginUserDto input) {
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                 input.getEmail(),
                 input.getPassword()
             )
         );
-
-        return registrationRepo.findByEmail(input.getEmail()).orElseThrow();
+        User authenticatedUser=registrationRepo.findByEmail(input.getEmail()).orElseThrow();
+        String jwtToken = jwtService.generateToken(authenticatedUser);
+        LoginResponse loginResponse = new LoginResponse();//.setToken(jwtToken).setExpiresIn(jwtService.getExpirationTime());
+        loginResponse.setEmail(authenticatedUser.getEmail());
+        loginResponse.setExpiresIn(jwtService.getExpirationTime());
+        loginResponse.setFirstName(authenticatedUser.getFirstName());
+        loginResponse.setLastName(authenticatedUser.getLastName());
+        loginResponse.setMiddleName(authenticatedUser.getMiddleName());
+        loginResponse.setUserid(authenticatedUser.getId());
+        loginResponse.setToken(jwtToken);
+        return loginResponse;
     }
 
     public List<User> allUsers() {
