@@ -1,5 +1,6 @@
 package com.wu.shopping.service;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.jaxb.SpringDataJaxb.OrderDto;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wu.shopping.dto.PlaceOrderDto;
 import com.wu.shopping.exception.NoDataFoundException;
@@ -55,13 +57,33 @@ public class OrderDetailService {
 	public 	List<OrderDetail> findOrderDetailByUserId(String userId){
 		return orderDetailRepo.findByUserid(userId);
 	}
+	
+	public 	List<OrderDetail> getAllOrderDetailForAdmin(){
+		return orderDetailRepo.findAll();
+	}
+	
+	public 	String updateOrderStatusByAdmin( String OrderId, String status){
+		OrderDetail orderDetail= orderDetailRepo.findById(OrderId).orElseThrow();
+		orderDetail.setStatus(status);
+		orderDetailRepo.save(orderDetail);
+		return orderDetail.getId();
+	}
 
 	public 	OrderDetail cancelOrder(String oderId,String userId){
 		OrderDetail orderFetch= orderDetailRepo.findByIdAndUserid(oderId,userId).orElseThrow(() -> new NoDataFoundException("No Data Found"));
-		orderFetch.setStatus("Cancelled");
-		orderFetch.setPaymentStatus("Refunded");
-		walletService.refundWalletAmountByUserId(orderFetch.getUserid(), orderFetch.getTotalAmount(), orderFetch.getId());
-		orderDetailRepo.save(orderFetch);
+		Instant now = Instant.now();
+		Instant OrderDate=orderFetch.getOrderDate();
+		 Duration timeDifference = Duration.between(now, OrderDate);
+		 System.out.println("timeDifference"+timeDifference);
+		 System.out.println("hours"+timeDifference.toHours());
+		 if(timeDifference.toHours()<5 && orderFetch.getStatus().equalsIgnoreCase("Ordered")) {
+			 orderFetch.setStatus("Cancelled");
+			orderFetch.setPaymentStatus("Refunded");
+			walletService.refundWalletAmountByUserId(orderFetch.getUserid(), orderFetch.getTotalAmount(), orderFetch.getId());
+			orderDetailRepo.save(orderFetch);
+		 }
+		 else throw new SomeThingWentWrongException("Error.catCancellOrder");
+		
 		return orderFetch;
 	}
 	public Map placeorder(PlaceOrderDto pod) {

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,6 +40,7 @@ import com.wu.shopping.repo.ProductRepo;
 import com.wu.shopping.repo.WalletRepo;
 import com.wu.shopping.service.CartProductService;
 import com.wu.shopping.service.OrderDetailService;
+import com.wu.shopping.service.jwt.JwtService;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -52,6 +54,9 @@ public class OrderDetailController {
 	
 	@Autowired
 	private OrderDetailService orderDetailService;
+	
+	@Autowired
+	private JwtService jwtService;
 	
 	@PostMapping(value = "placeorder", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> placeorder(@RequestBody PlaceOrderDto pod) {
@@ -85,5 +90,31 @@ public class OrderDetailController {
 		responseMap.put("status", HttpStatus.OK.value());
 		return new ResponseEntity<>(responseMap, HttpStatus.OK);
 	}
+	
+	@GetMapping(value = "getAllOrderDetailForAdmin", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> getAllOrderDetailForAdmin(@RequestHeader("Authorization") String authHeader) {
+		logger.info("inside getOrderDetail() begine for user ");
+		 final String jwt = authHeader.substring(7);
+         final String userEmail = jwtService.extractUsername(jwt);
+         System.out.println("userEmail "+userEmail);
+         if(userEmail.contains("admin"))
+		return new ResponseEntity<>(orderDetailService.getAllOrderDetailForAdmin(), HttpStatus.OK);
+         else 
+        	 return new ResponseEntity<>("Acess Denied", HttpStatus.OK);
+	}
+	
+	@GetMapping(value = "updateOrderStatusByAdmin", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> updateOrderStatusByAdmin(@RequestHeader ("Authorization") String authHeader,@RequestParam String OrderId,@RequestParam String status) {
+		logger.info("inside updateOrderStatusByAdmin() begine for user ");
+		
+		 final String jwt = authHeader.substring(7);
+         final String userEmail = jwtService.extractUsername(jwt);
+         System.out.println("userEmail "+userEmail);
+         if(userEmail.contains("admin"))
+     		return new ResponseEntity<>(orderDetailService.updateOrderStatusByAdmin(OrderId, status), HttpStatus.OK);
+         else 
+        	 return new ResponseEntity<>("Acess Denied", HttpStatus.OK);
+	}
+	
 	
 }
