@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wu.shopping.constant.WUConstant;
 import com.wu.shopping.dto.CartProductDto;
 import com.wu.shopping.model.CartProduct;
 import com.wu.shopping.model.CartResponse;
@@ -27,9 +28,9 @@ import com.wu.shopping.service.CartProductService;
 
 import jakarta.validation.Valid;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = WUConstant.CORS_DOMAIN)
 @RestController
-@RequestMapping("/cart")
+@RequestMapping(WUConstant.CART_CONTROLLER_CONTEXT)
 public class CartProductController {
 	Logger logger = LoggerFactory.getLogger(CartProductController.class);
 	
@@ -61,32 +62,6 @@ public class CartProductController {
 	@PostMapping(value = "viewCartDetail", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> viewCartDetail(@RequestBody CartProductDto cartProductDto, BindingResult br) {
 		logger.info("inside viewCartDetail() begine");
-		List<CartProduct> cartList=cartProductService.getAllCartProductByUserId(cartProductDto.getUserId());
-		double productAmount=cartList.stream().mapToDouble(productlist->productlist.getQuantity()*productlist.getProduct().getPrice()).sum();
-		List<Map<String,Object>> mapList=new ArrayList<>();
-		
-		for (CartProduct cartProduct : cartList) {
-			Map prodMap=new HashMap<>();
-			prodMap.put("title", cartProduct.getProduct().getTitle());
-			prodMap.put("price", cartProduct.getProduct().getPrice());
-			prodMap.put("quantity", cartProduct.getQuantity());
-			prodMap.put("productId", cartProduct.getProduct().getProductId());
-			prodMap.put("image", cartProduct.getProduct().getImages());
-			prodMap.put("amount", cartProduct.getProduct().getPrice()*cartProduct.getQuantity());
-			mapList.add(prodMap);
-		}
-		CartResponse cartResponse=new CartResponse();
-		
-		cartResponse.setCartProductList(mapList);
-		cartResponse.setDeliveryCharge(50);
-		cartResponse.setProductAmount(productAmount);
-		cartResponse.setProductCount(cartList.size());
-	//	double tax=12/100;
-		cartResponse.setTax((productAmount *12)/100);
-	//	double tax=productAmount+cartResponse.getDeliveryCharge()+cartResponse.getTax();
-		cartResponse.setTotalAmount(productAmount+cartResponse.getDeliveryCharge()+cartResponse.getTax());
-	//	int cartTotal=cartList.stream().forEach(productlist->productlist.getQuantity()*productlist.getProduct().getPrice());
-		
-		return new ResponseEntity<>(cartResponse, HttpStatus.OK);
+		return new ResponseEntity<>(cartProductService.viewCartDetail(cartProductDto), HttpStatus.OK);
 	}
 }

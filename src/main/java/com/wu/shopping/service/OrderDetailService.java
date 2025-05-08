@@ -14,9 +14,11 @@ import org.springframework.stereotype.Service;
 
 import com.wu.shopping.dto.PlaceOrderDto;
 import com.wu.shopping.exception.NoDataFoundException;
+import com.wu.shopping.exception.SomeThingWentWrongException;
 import com.wu.shopping.model.CartProduct;
 import com.wu.shopping.model.OrderDetail;
 import com.wu.shopping.model.PaymentDetail;
+import com.wu.shopping.model.User;
 import com.wu.shopping.repo.OrderDetailRepo;
 import com.wu.shopping.repo.PaymentDetailRepo;
 
@@ -40,6 +42,9 @@ public class OrderDetailService {
 	@Autowired
 	private WalletService walletService;
 	
+	@Autowired
+	private RegistrationService registrationService;
+	
 	@Value("${delivery.charge}")
 	private int deliveryCharge;
 	
@@ -61,6 +66,11 @@ public class OrderDetailService {
 	}
 	public Map placeorder(PlaceOrderDto pod) {
 		logger.info("Inside placeOrder | for user " + pod.getUserid());
+		
+		User user= registrationService.findUserById(pod.getUserid());
+		if(user.getFirstName().isEmpty() || user.getFirstName().isBlank() ||user.getLastName().isBlank() ||user.getLastName().isEmpty()) {
+			throw new SomeThingWentWrongException("Error.NofirstLastName");
+		}
 		OrderDetail orderCreated = createOrderForUser(pod);
 		logger.info(
 				"------ placing final Order | with status payment awaiting |for user " + pod.getUserid() + "-------");
@@ -133,7 +143,9 @@ public class OrderDetailService {
 			paymentDetail.setPaymentStatus("payment awaiting");
 		}
 		if (pod.getMode().equalsIgnoreCase("creditcard")) {
-			paymentDetail.setCrediCardNumber(pod.getCardNumber());
+		//	paymentDetail.setCrediCardNumber(pod.getCardNumber());
+			paymentDetail.setCrediCardNumber("****-****-****-"+pod.getCardNumber().substring(11));
+		//	paymentDetail.setCrediCardNumber("****-****-****-"+pod.getCardNumber().substring(15)) //with -;
 			paymentDetail.setExpiry(pod.getExpiry());
 			// cardnumber,cvv,exp
 		}

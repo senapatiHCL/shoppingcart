@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +57,8 @@ public class OrderDetailController {
 	public ResponseEntity<?> placeorder(@RequestBody PlaceOrderDto pod) {
 		logger.info("inside placeorder() begine for user "+pod.getUserid());
 		if(pod.getMode().equalsIgnoreCase("creditcard")) {
-			if(pod.getCardNumber().length()!=16 || pod.getCvv().length()!=3 || pod.getExpiry().length()!=5) {
+			boolean matcher = Pattern.matches("^[0-9-]*$",pod.getCardNumber());
+			if(pod.getCardNumber().length()!=16 || pod.getCvv().length()!=3 || pod.getExpiry().length()!=5 ||!matcher) {
 				throw new SomeThingWentWrongException("Error.incorrectCardDetail");
 			}
 		}

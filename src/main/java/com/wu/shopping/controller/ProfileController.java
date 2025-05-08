@@ -3,6 +3,7 @@ package com.wu.shopping.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wu.shopping.dto.AddressDto;
 import com.wu.shopping.dto.UpdatePasswordDto;
 import com.wu.shopping.dto.UserDTO;
 import com.wu.shopping.exception.NoDataFoundException;
@@ -13,6 +14,7 @@ import com.wu.shopping.service.RegistrationService;
 import jakarta.validation.Valid;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -23,6 +25,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -76,9 +79,20 @@ responseMap.put("status", HttpStatus.OK.value());
 
 @GetMapping(value="/getAddress")
 public ResponseEntity<?> updateUser(@RequestParam String userId) {
- Address add= registrationService.findUserById(userId).getAddress();
+ List<Address> add= registrationService.findUserById(userId).getAddress();
   Map responseMap = new HashMap<>();
 	 responseMap.put("shippingAddress", add);
+responseMap.put("status", HttpStatus.OK.value());
+  return new ResponseEntity<>(responseMap,HttpStatus.OK);
+//	return ResponseEntity.ok(registrationService.updateUser(user));
+}
+
+@PostMapping(value="/saveNewAddress")
+public ResponseEntity<?> saveNewAddress(@Valid @RequestBody AddressDto addressDto) {
+	registrationService.saveNewAddress(addressDto);
+ 
+  Map responseMap = new HashMap<>();
+	 responseMap.put("shippingAddress", "shipping Address saved");
 responseMap.put("status", HttpStatus.OK.value());
   return new ResponseEntity<>(responseMap,HttpStatus.OK);
 //	return ResponseEntity.ok(registrationService.updateUser(user));

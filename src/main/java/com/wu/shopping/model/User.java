@@ -32,7 +32,7 @@ public class User implements UserDetails{
 
     private String phoneNumber;
 
-    private Address address;
+    private List<Address> address;
 
     public String getId() {
         return id;
@@ -90,13 +90,15 @@ public class User implements UserDetails{
         this.phoneNumber = phoneNumber;
     }
 
-    public Address getAddress() {
-        return address;
-    }
 
-    public void setAddress(Address address) {
-        this.address = address;
-    }
+
+	public List<Address> getAddress() {
+		return address;
+	}
+
+	public void setAddress(List<Address> address) {
+		this.address = address;
+	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

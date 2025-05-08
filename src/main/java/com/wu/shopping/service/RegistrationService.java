@@ -1,6 +1,7 @@
 package com.wu.shopping.service;
 
 
+import com.wu.shopping.dto.AddressDto;
 import com.wu.shopping.dto.UpdatePasswordDto;
 import com.wu.shopping.dto.UserDTO;
 import com.wu.shopping.dto.UserDTOUS;
@@ -14,6 +15,8 @@ import com.wu.shopping.repo.RegistrationRepo;
 import com.wu.shopping.repo.WalletRepo;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -72,7 +75,9 @@ public class RegistrationService {
     	add.setState(user.getAddress().getState());
     	add.setStreet(user.getAddress().getStreet());
     	add.setZipCode(user.getAddress().getZipCode());
-    	registeringUser.setAddress(add);
+    	List<Address> addList=new ArrayList<>();
+    	addList.add(add);
+    	registeringUser.setAddress(addList);
     	return registeringUser;
     }
     
@@ -91,7 +96,9 @@ public class RegistrationService {
     	add.setState(user.getAddress().getState());
     	add.setStreet(user.getAddress().getStreet());
     	add.setZipCode(user.getAddress().getZipCode());
-    	registeringUser.setAddress(add);
+    	List<Address> addList=new ArrayList();
+    	addList.add(add);
+    	registeringUser.setAddress(addList);
     	return registeringUser;
     }
     
@@ -104,6 +111,16 @@ public class RegistrationService {
      //   user.setPassword(passwordEncoder.matches(email, email));
       //  System.out.println("check--"+passwordEncoder.matches("mukmuk1234", user.getPassword()));
     }
+    
+    
+    public User saveNewAddress(AddressDto addressDto) throws NoDataFoundException {
+    	User user= findUserById(addressDto.getUserId());
+    	 List<Address> addList=user.getAddress();
+    	 addList.add(addressDto.getAddress());
+    	 user.setAddress(addList);
+        return registrationRepo.save(user);
+    }
+    
     
     public boolean existsByEmail(String email) throws NoDataFoundException {
         return registrationRepo.existsByEmail(email);

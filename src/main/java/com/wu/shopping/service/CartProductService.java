@@ -1,7 +1,10 @@
 package com.wu.shopping.service;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +15,7 @@ import com.wu.shopping.dto.CartProductDto;
 import com.wu.shopping.exception.NoDataFoundException;
 import com.wu.shopping.exception.SomeThingWentWrongException;
 import com.wu.shopping.model.CartProduct;
+import com.wu.shopping.model.CartResponse;
 import com.wu.shopping.model.Product;
 import com.wu.shopping.repo.CartProductRepo;
 
@@ -58,6 +62,38 @@ public class CartProductService {
 	public List<CartProduct> getAllCartProductByUserId(String userId){
 		logger.info("Inside getAllCartProductByUserId() | finding all product | in cart by user "+userId);
 		return cartProductRepo.findAllByUserid(userId);
+	}
+	
+	public CartResponse viewCartDetail(CartProductDto cartProductDto){
+		logger.info("Inside viewCartDetail() | finding all product | in cart by user "+cartProductDto.getUserId());
+		
+		List<CartProduct> cartList=getAllCartProductByUserId(cartProductDto.getUserId());
+		double productAmount=cartList.stream().mapToDouble(productlist->productlist.getQuantity()*productlist.getProduct().getPrice()).sum();
+		List<Map<String,Object>> mapList=new ArrayList<>();
+		
+		for (CartProduct cartProduct : cartList) {
+			Map prodMap=new HashMap<>();
+			prodMap.put("title", cartProduct.getProduct().getTitle());
+			prodMap.put("price", cartProduct.getProduct().getPrice());
+			prodMap.put("quantity", cartProduct.getQuantity());
+			prodMap.put("productId", cartProduct.getProduct().getProductId());
+			prodMap.put("image", cartProduct.getProduct().getImages());
+			prodMap.put("amount", cartProduct.getProduct().getPrice()*cartProduct.getQuantity());
+			mapList.add(prodMap);
+		}
+		CartResponse cartResponse=new CartResponse();
+		
+		cartResponse.setCartProductList(mapList);
+		cartResponse.setDeliveryCharge(50);
+		cartResponse.setProductAmount(productAmount);
+		cartResponse.setProductCount(cartList.size());
+	//	double tax=12/100;
+		cartResponse.setTax((productAmount *12)/100);
+	//	double tax=productAmount+cartResponse.getDeliveryCharge()+cartResponse.getTax();
+		cartResponse.setTotalAmount(productAmount+cartResponse.getDeliveryCharge()+cartResponse.getTax());
+	//	int cartTotal=cartList.stream().forEach(productlist->productlist.getQuantity()*productlist.getProduct().getPrice());
+		
+		return cartResponse;
 	}
 	
 	public void updateCartProductByUserId(CartProduct cartProduct){

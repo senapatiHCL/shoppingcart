@@ -41,7 +41,9 @@ public class AuthenticationService {
     	add.setState(user.getAddress().getState());
     	add.setStreet(user.getAddress().getStreet());
     	add.setZipCode(user.getAddress().getZipCode());
-    	registeringUser.setAddress(add);
+    	List<Address> addList=new ArrayList<>();
+    	addList.add(add);
+    	registeringUser.setAddress(addList);
     	user.setPassword(passwordEncoder.encode(user.getPassword()));
         return registrationRepo.save(registeringUser);
     }
