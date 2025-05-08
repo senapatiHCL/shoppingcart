@@ -28,6 +28,8 @@ import com.wu.shopping.service.CartProductService;
 
 import jakarta.validation.Valid;
 
+import static com.wu.shopping.constant.WUConstant.*;
+
 @CrossOrigin(origins = WUConstant.CORS_DOMAIN)
 @RestController
 @RequestMapping(WUConstant.CART_CONTROLLER_CONTEXT)
@@ -37,7 +39,7 @@ public class CartProductController {
 	@Autowired
 	private CartProductService cartProductService;
 
-	@PostMapping(value = "addToCart", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = ADD_CART, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> addToCart(@Valid @RequestBody CartProductDto cartProductDto, BindingResult br) {
 		logger.info("inside addToCart() begine");
 		cartProductService.addToCart(cartProductDto);
@@ -48,7 +50,7 @@ public class CartProductController {
 		return new ResponseEntity<>(responseMap, HttpStatus.OK);
 	}
 	
-	@PostMapping(value = "removeFromCart", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = REMOVE_FROM_CART, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> removeFromCart(@RequestBody CartProductDto cartProductDto, BindingResult br) {
 		logger.info("inside removeFromCart() begine");
 		cartProductService.removeCartItemByUseridAndProductId(cartProductDto);
@@ -59,7 +61,7 @@ public class CartProductController {
 		return new ResponseEntity<>(responseMap, HttpStatus.OK);
 	}
 	
-	@PostMapping(value = "viewCartDetail", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = VIEW_CART_DETAIL, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> viewCartDetail(@RequestBody CartProductDto cartProductDto, BindingResult br) {
 		logger.info("inside viewCartDetail() begine");
 		return new ResponseEntity<>(cartProductService.viewCartDetail(cartProductDto), HttpStatus.OK);

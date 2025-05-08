@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.wu.shopping.constant.WUConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,9 +25,12 @@ import com.wu.shopping.service.ProductService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-@CrossOrigin(origins = "http://localhost:3000")
+
+import static com.wu.shopping.constant.WUConstant.*;
+
+@CrossOrigin(origins = WUConstant.CORS_DOMAIN)
 @RestController
-@RequestMapping("/public/product")
+@RequestMapping(WUConstant.PRODUCT_CONTROLLER_CONTEXT)
 public class ProductController {
 
 	Logger logger=LoggerFactory.getLogger(ProductController.class);
@@ -37,21 +41,21 @@ public class ProductController {
 	@Autowired
 	private ProductRepo productRepo;
 	
-	@PostMapping(value="saveProduct",consumes = MediaType.APPLICATION_JSON_VALUE ,produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value=PRODUCT_SAVE,consumes = MediaType.APPLICATION_JSON_VALUE ,produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> saveProduct(@RequestBody Product product,BindingResult br) {
 		logger.info("inside saveProduct() begine");
 			return ResponseEntity.ok(productService.saveProduct(product));
 	}
 
 	
-	@GetMapping(value="getProductById",consumes = MediaType.APPLICATION_JSON_VALUE ,produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value=GET_PRODUCT,consumes = MediaType.APPLICATION_JSON_VALUE ,produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> getProductById(@RequestParam String productid) {
 		logger.info("inside saveProduct() begine");
 			return ResponseEntity.ok(productService.getProductById(productid));
 	}
 	
 	
-	@GetMapping(value="getAllProductCatalog" ,produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value=GET_ALLPRODUCT ,produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> searchProduct(@RequestParam String searchKeyword) {
 		logger.info("inside searchProduct() begine");
 		List<Product> productList=productService.searchProduct(searchKeyword);

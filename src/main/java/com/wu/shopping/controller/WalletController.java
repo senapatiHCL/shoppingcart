@@ -3,6 +3,7 @@ package com.wu.shopping.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.wu.shopping.constant.WUConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.wu.shopping.exception.NoDataFoundException;
 import com.wu.shopping.service.WalletService;
 
+import static com.wu.shopping.constant.WUConstant.FETCH_WALLET_BALANCE;
+
 @Controller
-@RequestMapping("/wallet")
+@RequestMapping(WUConstant.WALLET_CONTROLLER)
 public class WalletController {
 
 	Logger logger=LoggerFactory.getLogger(WalletController.class);
@@ -25,7 +28,7 @@ public class WalletController {
 	@Autowired
 	private WalletService walletService;
 	
-	@GetMapping(value="fetchWalletBalanceById")
+	@GetMapping(value=FETCH_WALLET_BALANCE)
 	public ResponseEntity<?> fetchWalletAmountByUserId(@RequestParam String userId) throws NoDataFoundException {
 		logger.info("inside fetchWalletAmountByUserId() begine");
 		 Map responseMap = new HashMap<>();

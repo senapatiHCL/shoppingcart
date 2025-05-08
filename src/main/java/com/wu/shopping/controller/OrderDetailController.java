@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.wu.shopping.constant.WUConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +41,11 @@ import com.wu.shopping.repo.WalletRepo;
 import com.wu.shopping.service.CartProductService;
 import com.wu.shopping.service.OrderDetailService;
 
-@CrossOrigin(origins = "http://localhost:3000")
+import static com.wu.shopping.constant.WUConstant.*;
+
+@CrossOrigin(origins = WUConstant.CORS_DOMAIN)
 @RestController
-@RequestMapping("/order")
+@RequestMapping(WUConstant.ORDER_CONTROLLER_CONTEXT)
 public class OrderDetailController {
 	
 	Logger logger = LoggerFactory.getLogger(OrderDetailController.class);
@@ -53,7 +56,7 @@ public class OrderDetailController {
 	@Autowired
 	private OrderDetailService orderDetailService;
 	
-	@PostMapping(value = "placeorder", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = ORDER_PLACE, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> placeorder(@RequestBody PlaceOrderDto pod) {
 		logger.info("inside placeorder() begine for user "+pod.getUserid());
 		if(pod.getMode().equalsIgnoreCase("creditcard")) {
@@ -69,13 +72,13 @@ public class OrderDetailController {
 		return new ResponseEntity<>(responseMap, HttpStatus.OK);
 	}
 	
-	@GetMapping(value = "getOrderDetail", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = ORDER_DETAIL, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> getOrderDetail(@RequestParam String userId) {
 		logger.info("inside getOrderDetail() begine for user ");
 		return new ResponseEntity<>(orderDetailService.findOrderDetailByUserId(userId), HttpStatus.OK);
 	}
 	
-	@PutMapping(value = "cancelOrder", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PutMapping(value = ORDER_CANCEL, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> cancelOrder(@RequestParam String userId,@RequestParam String orderId) {
 		logger.info("inside cancelOrder() begine for user ");
 		OrderDetail oderdetl=orderDetailService.cancelOrder(orderId,userId);
