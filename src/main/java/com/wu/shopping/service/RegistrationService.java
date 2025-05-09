@@ -116,7 +116,14 @@ public class RegistrationService {
     public User saveNewAddress(AddressDto addressDto) throws NoDataFoundException {
     	User user= findUserById(addressDto.getUserId());
     	 List<Address> addList=user.getAddress();
-    	 addList.add(addressDto.getAddress());
+    	 Address newAddress=new Address();
+    	 newAddress.setCity(addressDto.getCity());
+    	 newAddress.setCountry(addressDto.getCountry());
+    	 newAddress.setHouseNumber(addressDto.getHouseNumber());
+    	 newAddress.setState(addressDto.getState());
+    	 newAddress.setStreet(addressDto.getStreet());
+    	 newAddress.setZipCode(addressDto.getZipCode());
+         addList.add(newAddress);
     	 user.setAddress(addList);
         return registrationRepo.save(user);
     }

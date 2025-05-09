@@ -33,7 +33,7 @@ public class SecurityConfiguration {
         http.csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/auth/**","/public/**")
+                .requestMatchers("/auth/**","/public/**","/swagger-ui/**")
                 .permitAll()
                 .anyRequest()
                 .authenticated()

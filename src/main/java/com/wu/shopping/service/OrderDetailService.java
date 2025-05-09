@@ -14,6 +14,7 @@ import org.springframework.data.domain.jaxb.SpringDataJaxb.OrderDto;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.wu.shopping.constant.WUConstant;
 import com.wu.shopping.dto.PlaceOrderDto;
 import com.wu.shopping.exception.NoDataFoundException;
 import com.wu.shopping.exception.SomeThingWentWrongException;
@@ -51,7 +52,7 @@ public class OrderDetailService {
 	private int deliveryCharge;
 	
 	public 	OrderDetail findByOrderId(String orderId){
-		return orderDetailRepo.findById(orderId).orElseThrow(() -> new NoDataFoundException("No Data Found"));
+		return orderDetailRepo.findById(orderId).orElseThrow(() -> new NoDataFoundException(WUConstant.NO_DATA_FOUND));
 	}
 	
 	public 	List<OrderDetail> findOrderDetailByUserId(String userId){
@@ -74,15 +75,15 @@ public class OrderDetailService {
 		Instant now = Instant.now();
 		Instant OrderDate=orderFetch.getOrderDate();
 		 Duration timeDifference = Duration.between(now, OrderDate);
-		 System.out.println("timeDifference"+timeDifference);
-		 System.out.println("hours"+timeDifference.toHours());
-		 if(timeDifference.toHours()<5 && orderFetch.getStatus().equalsIgnoreCase("Ordered")) {
-			 orderFetch.setStatus("Cancelled");
-			orderFetch.setPaymentStatus("Refunded");
+		 logger.info("timeDifference"+timeDifference);
+		 logger.info("hours"+timeDifference.toHours());
+		 if(timeDifference.toHours()<5 && orderFetch.getStatus().equalsIgnoreCase(WUConstant.ORDERED)) {
+			 orderFetch.setStatus(WUConstant.ORDER_CANCEELED);
+			orderFetch.setPaymentStatus(WUConstant.REFUNDED);
 			walletService.refundWalletAmountByUserId(orderFetch.getUserid(), orderFetch.getTotalAmount(), orderFetch.getId());
 			orderDetailRepo.save(orderFetch);
 		 }
-		 else throw new SomeThingWentWrongException("Error.catCancellOrder");
+		 else throw new SomeThingWentWrongException(WUConstant.ERROR_CANT_CANCELL_ORDER);
 		
 		return orderFetch;
 	}
@@ -102,9 +103,9 @@ public class OrderDetailService {
 
 		logger.info("*********** payment successfull  |for user " + pod.getUserid() + "***********");
 		OrderDetail orderbyUser = orderDetailRepo.findById(orderCreated.getId()).orElseThrow();
-		orderbyUser.setPaymentStatus("payment done");
-		if (pod.getMode().equalsIgnoreCase("cod")) {
-			orderbyUser.setPaymentStatus("payment awaiting");
+		orderbyUser.setPaymentStatus(WUConstant.PAYMENT_DONE);
+		if (pod.getMode().equalsIgnoreCase(WUConstant.COD)) {
+			orderbyUser.setPaymentStatus(WUConstant.PAYMENT_AWAITING);
 		}
 		orderDetailRepo.save(orderbyUser);
 		logger.info("---------Updating  Order | with status payment done |for user " + pod.getUserid() + "--------");
@@ -115,8 +116,8 @@ public class OrderDetailService {
 		logger.info("---------| Reducing quantity of  products from inventory |--------");
 
 		Map responseMap = new HashMap<>();
-        responseMap.put("orderId", orderCreated.getId());
-        responseMap.put("PaymentId", paymentCreated.getId());
+        responseMap.put(WUConstant.ORDER_ID, orderCreated.getId());
+        responseMap.put(WUConstant.PAYMENT_ID, paymentCreated.getId());
         
 		return responseMap;
 	}
@@ -134,7 +135,7 @@ public class OrderDetailService {
 		OrderDetail oder = new OrderDetail();
 		Instant now = Instant.now();
 		long timestamp = now.toEpochMilli();
-		oder.setId("order" + timestamp);
+		oder.setId(WUConstant.ORDER_ID_PREFIX + timestamp);
 		oder.setDeliveryCharge(deliveryCharge);
 		oder.setOrderDate(now);
 		oder.setUserid(pod.getUserid());
@@ -142,9 +143,9 @@ public class OrderDetailService {
 		oder.setTax((productAmount * 12) / 100);
 		oder.setProductAmount(productAmount);
 		oder.setTotalAmount(productAmount + oder.getTax() + oder.getDeliveryCharge());
-		oder.setStatus("Ordered");
+		oder.setStatus(WUConstant.ORDERED);
 		oder.setPaymentMode(pod.getMode());
-		oder.setPaymentStatus("payment awaiting");
+		oder.setPaymentStatus(WUConstant.PAYMENT_AWAITING);
 		oder.setShippingAddress(pod.getShippingAddress());
 		orderDetailRepo.save(oder);
 		return oder;
@@ -156,22 +157,22 @@ public class OrderDetailService {
 		PaymentDetail paymentDetail = new PaymentDetail();
 		paymentDetail.setUserId(orderCreated.getUserid());
 		paymentDetail.setAmount(orderCreated.getTotalAmount());
-		paymentDetail.setId("zara" + timestamp);
+		paymentDetail.setId(WUConstant.PAYMENT_ID_PREFIX + timestamp);
 		paymentDetail.setOrderId(orderCreated.getId());
 		paymentDetail.setPaymentMode(orderCreated.getPaymentMode());
 		paymentDetail.setPaymentDate(now);
-		paymentDetail.setPaymentStatus("payment done");
-		if (pod.getMode().equalsIgnoreCase("cod")) {
-			paymentDetail.setPaymentStatus("payment awaiting");
+		paymentDetail.setPaymentStatus(WUConstant.PAYMENT_DONE);
+		if (pod.getMode().equalsIgnoreCase(WUConstant.COD)) {
+			paymentDetail.setPaymentStatus(WUConstant.PAYMENT_AWAITING);
 		}
-		if (pod.getMode().equalsIgnoreCase("creditcard")) {
+		if (pod.getMode().equalsIgnoreCase(WUConstant.CREDIT_CARD)) {
 		//	paymentDetail.setCrediCardNumber(pod.getCardNumber());
 			paymentDetail.setCrediCardNumber("****-****-****-"+pod.getCardNumber().substring(11));
 		//	paymentDetail.setCrediCardNumber("****-****-****-"+pod.getCardNumber().substring(15)) //with -;
 			paymentDetail.setExpiry(pod.getExpiry());
 			// cardnumber,cvv,exp
 		}
-		if (pod.getMode().equalsIgnoreCase("wallet")) {
+		if (pod.getMode().equalsIgnoreCase(WUConstant.WALLET)) {
 			walletService.deductWalletAmountByUserId(orderCreated.getUserid(), orderCreated.getTotalAmount(), orderCreated.getId());
 			// username,passowrd,bank
 		}

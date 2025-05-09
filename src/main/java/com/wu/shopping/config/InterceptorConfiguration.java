@@ -12,7 +12,7 @@ public class InterceptorConfiguration implements WebMvcConfigurer{
 	@Override
 	   public void addInterceptors(InterceptorRegistry registry) {
 	      registry.addInterceptor(new LogIntercepter()).
-	      addPathPatterns("/profile/*","/public/**","/auth/*")
+	      addPathPatterns("/profile/*","/public/**","/auth/*","/cart/*","/order/*","/wallet/*")
           .excludePathPatterns("/api/health", "/api/docs");
 	   }
 	
